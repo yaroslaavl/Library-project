@@ -8,3 +8,4 @@ public record RoomType(Integer id,
                        BigDecimal price) {
 
 }
+//

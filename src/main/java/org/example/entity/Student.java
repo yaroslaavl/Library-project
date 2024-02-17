@@ -33,7 +33,6 @@ public class Student {
                 ", roomNumberId=" + roomNumberId +
                 '}';
     }
-//
     public Integer getId() {
         return id;
     }

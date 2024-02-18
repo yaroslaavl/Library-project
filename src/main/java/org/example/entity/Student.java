@@ -8,17 +8,17 @@ public class Student {
     private String lastName;
     private LocalDateTime settlementDate;
     private String homePhone;
-    private Long roomNumber;
-    private Integer roomNumberId;
+    private Integer room;
+    private Integer roomTypeId;
 
-    public Student(Integer id, String firstName, String lastName, LocalDateTime settlementDate, String homePhone, Long roomNumber,Integer roomNumberId) {
+    public Student(Integer id, String firstName, String lastName, LocalDateTime settlementDate, String homePhone, Integer room,Integer roomTypeId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.settlementDate = settlementDate;
         this.homePhone = homePhone;
-        this.roomNumber = roomNumber;
-        this.roomNumberId = roomNumberId;
+        this.room = room;
+        this.roomTypeId = roomTypeId;
     }
 
     @Override
@@ -29,10 +29,11 @@ public class Student {
                 ", lastName='" + lastName + '\'' +
                 ", settlementDate=" + settlementDate +
                 ", homePhone='" + homePhone + '\'' +
-                ", roomNumber=" + roomNumber +
-                ", roomNumberId=" + roomNumberId +
+                ", room=" + room +
+                ", roomTypeId=" + roomTypeId +
                 '}';
     }
+
     public Integer getId() {
         return id;
     }
@@ -73,20 +74,20 @@ public class Student {
         this.homePhone = homePhone;
     }
 
-    public Long getRoomNumber() {
-        return roomNumber;
+    public Integer getRoom() {
+        return room;
     }
 
-    public void setRoomNumber(Long roomNumber) {
-        this.roomNumber = roomNumber;
+    public void setRoom(Integer room) {
+        this.room = room;
     }
 
-    public Integer getRoomNumberId() {
-        return roomNumberId;
+    public Integer getRoomTypeId() {
+        return roomTypeId;
     }
 
-    public void setRoomNumberId(Integer roomNumberId) {
-        this.roomNumberId = roomNumberId;
+    public void setRoomTypeId(Integer roomTypeId) {
+        this.roomTypeId = roomTypeId;
     }
 }
 

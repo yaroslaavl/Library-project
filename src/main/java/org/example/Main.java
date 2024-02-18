@@ -8,6 +8,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         StudentDao studentDao = new StudentDao();
-
+        var roomCheck = StudentDao.getInstance().spaceСheck();
+        System.out.println(roomCheck);
     }
 }

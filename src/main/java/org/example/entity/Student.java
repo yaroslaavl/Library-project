@@ -1,17 +1,17 @@
 package org.example.entity;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 public class Student {
     private Integer id;
     private String firstName;
     private String lastName;
-    private LocalDateTime settlementDate;
+    private Timestamp settlementDate;
     private String homePhone;
     private Integer room;
     private Integer roomTypeId;
 
-    public Student(Integer id, String firstName, String lastName, LocalDateTime settlementDate, String homePhone, Integer room,Integer roomTypeId) {
+    public Student(Integer id, String firstName, String lastName, Timestamp settlementDate, String homePhone, Integer room,Integer roomTypeId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -19,6 +19,10 @@ public class Student {
         this.homePhone = homePhone;
         this.room = room;
         this.roomTypeId = roomTypeId;
+    }
+
+    public Student() {
+        
     }
 
     @Override
@@ -58,11 +62,11 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public LocalDateTime getSettlementDate() {
+    public Timestamp getSettlementDate() {
         return settlementDate;
     }
 
-    public void setSettlementDate(LocalDateTime settlementDate) {
+    public void setSettlementDate(Timestamp settlementDate) {
         this.settlementDate = settlementDate;
     }
 
@@ -71,7 +75,22 @@ public class Student {
     }
 
     public void setHomePhone(String homePhone) {
-        this.homePhone = homePhone;
+        String formattedNumberOfPhone = homePhone.replaceAll("[^0-9]","");
+         if(formattedNumberOfPhone.length() <=3){
+             this.homePhone = formattedNumberOfPhone;
+             return;
+         }
+        StringBuilder formattedBuilder = new StringBuilder();
+        int count = 0;
+        for(char c:formattedNumberOfPhone.toCharArray()){
+            if(count == 3){
+                formattedBuilder.append("-");
+                count = 0;
+            }
+            formattedBuilder.append(c);
+            count++;
+        }
+        this.homePhone = formattedBuilder.toString();
     }
 
     public Integer getRoom() {

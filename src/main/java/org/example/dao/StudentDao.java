@@ -4,7 +4,6 @@ import org.example.entity.Student;
 import org.example.exception.DaoException;
 import java.sql.SQLException;
 import java.util.Optional;
-import java.util.Scanner;
 
 public class StudentDao {
     private static final StudentDao INSTANCE = new StudentDao();
@@ -37,7 +36,7 @@ public class StudentDao {
 
            var resultSet = preparedStatement.executeQuery();
            Student freeRoom = null;
-           if (resultSet.next()) {
+           while (resultSet.next()) {
                int count = resultSet.getInt(1);
                if (count > 0) {
                    System.out.println("Room where only 1 student: " + count);
@@ -56,7 +55,7 @@ public class StudentDao {
 
             var resultSet = preparedStatement.executeQuery();
             Student freeRoom = null;
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 int count = resultSet.getInt(1);
                 if (count > 0) {
                     System.out.println("Free room: " + count);
@@ -74,13 +73,14 @@ public class StudentDao {
              preparedStatement.setString(1,student.getFirstName());
              preparedStatement.setString(2,student.getLastName());
              preparedStatement.setString(3,student.getHomePhone());
-             var resultSet=preparedStatement.executeUpdate();
+             int resultSet = preparedStatement.executeUpdate();
              if(resultSet == 1){
                  System.out.println("You were added successfully");
+                 return student;
              } else {
                  System.out.println("Something went wrong");
+                 return null;
              }
-             return student;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

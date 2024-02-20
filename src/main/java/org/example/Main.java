@@ -35,6 +35,8 @@ public class Main {
                         var freeRoom = StudentDao.getInstance();
                         try{
                             Optional<Student> resultSoloRoom = freeRoom.checkSoloRoom();
+                            System.out.println("Choose a room");
+                            int roomNumber = scanner.nextInt();
                             if(resultSoloRoom.isPresent()){
                                 System.out.println("If you wish to reserve a room PRESS 1");
                                 System.out.println("Back to choosing a room type PRESS 2");
@@ -43,21 +45,61 @@ public class Main {
                                     System.out.println("Please fill in your information");
                                     add(scanner);
                                     //нужно добавить вывод всей информации
-                                    //нужно настроить таблицу ROOM
                                     var sql = """
                                             UPDATE library.room
-                                            SET occupants_count = 
-                                              CASE
-                                               WHEN occupants_count = 1
-                                                THEN occupants_count = 2
-                                               WHEN occupants_count = 0
-                                                THEN occupants_count = 1
-                                               END 
+                                            SET occupants_count = 1
+                                               WHERE room_number = ? AND occupants_count = 0    
                                             """;
                                     try(var connection = ConnectionManager.get();
-                                        var preparedStatement = connection.prepareStatement(sql)){
+                                        var preparedStatement = connection.prepareStatement(sql);
+                                        ){
+                                        preparedStatement.setInt(1,roomNumber);
                                         preparedStatement.executeUpdate();
-
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    var sql1 = """
+                                            UPDATE library.student
+                                            SET room = (SELECT library.room.id FROM library.room WHERE room_number = ?)
+                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student)
+                                            """;
+                                    try(var connection = ConnectionManager.get();
+                                        var preparedStatement = connection.prepareStatement(sql1);
+                                    ){
+                                        preparedStatement.setInt(1,roomNumber);
+                                        preparedStatement.executeUpdate();
+                                } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                     }
+                                    var sql2 = """
+                                            SELECT *
+                                            FROM library.student
+                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student)
+                                            """;
+                                    try(var connection = ConnectionManager.get();
+                                        var preparedStatement = connection.prepareStatement(sql2);
+                                    ){
+                                        var resultSet= preparedStatement.executeQuery();
+                                        while (resultSet.next()) {
+                                            int id = resultSet.getInt("id");
+                                            String firstName = resultSet.getString("first_name");
+                                            String lastName = resultSet.getString("last_name");
+                                            Timestamp date = resultSet.getTimestamp("settlement_date");
+                                            String homePhone = resultSet.getString("home_phone");
+                                            int room = resultSet.getInt("room");
+                                            int livingStatusId = resultSet.getInt("living_status_id");
+                                            System.out.println
+                                                    ("Your information = " +
+                                                            "{ " +
+                                                            "ID: "+id+
+                                                            ", First Name: "+firstName+
+                                                            ", Last Name: "+lastName+
+                                                            ", Date: "+date+
+                                                            ", Phone: "+homePhone+
+                                                            ", Room: "+room+
+                                                            ", Living Status: "+livingStatusId+
+                                                            " }");
+                                        }
                                     } catch (SQLException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -80,6 +122,8 @@ public class Main {
                         var freeRoom = StudentDao.getInstance();
                         try{
                              Optional<Student> resultNotSoloRoom = freeRoom.checkRoom();
+                            System.out.println("Choose a room");
+                            int roomNumber = scanner.nextInt();
                             if(resultNotSoloRoom.isPresent()){
                                 System.out.println("If you wish to reserve a room PRESS 1");
                                 System.out.println("Back to choosing a room type PRESS 2");
@@ -87,6 +131,65 @@ public class Main {
                                 if(choice1 == 1){
                                     System.out.println("Please fill in your information");
                                     add(scanner);
+                                    var sql = """
+                                            UPDATE library.room
+                                            SET occupants_count = 2
+                                               WHERE room_number = ? AND occupants_count = 1    
+                                            """;
+                                    try(var connection = ConnectionManager.get();
+                                        var preparedStatement = connection.prepareStatement(sql);
+                                        ){
+                                        preparedStatement.setInt(1,roomNumber);
+                                        preparedStatement.executeUpdate();
+
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    var sql1 = """
+                                            UPDATE library.student
+                                            SET room = (SELECT library.room.id FROM library.room WHERE room_number = ?)
+                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student)
+                                            """;
+                                    try(var connection = ConnectionManager.get();
+                                        var preparedStatement = connection.prepareStatement(sql1);
+                                    ){
+                                        preparedStatement.setInt(1,roomNumber);
+                                        preparedStatement.executeUpdate();
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    var sql2 = """
+                                            SELECT *
+                                            FROM library.student
+                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student)
+                                            """;
+                                    try(var connection = ConnectionManager.get();
+                                        var preparedStatement = connection.prepareStatement(sql2);
+                                    ){
+                                       var resultSet= preparedStatement.executeQuery();
+                                       while (resultSet.next()){
+                                           int id = resultSet.getInt("id");
+                                           String firstName = resultSet.getString("first_name");
+                                           String lastName = resultSet.getString("last_name");
+                                           Timestamp date = resultSet.getTimestamp("settlement_date");
+                                           String homePhone = resultSet.getString("home_phone");
+                                           int room = resultSet.getInt("room");
+                                           int livingStatusId = resultSet.getInt("living_status_id");
+                                           System.out.println
+                                                   ("Your information = " +
+                                                           "{ " +
+                                                           "ID: "+id+
+                                                           ", First Name: "+firstName+
+                                                           ", Last Name: "+lastName+
+                                                           ", Date: "+date+
+                                                           ", Phone: "+homePhone+
+                                                           ", Room: "+room+
+                                                           ", Living Status: "+livingStatusId+
+                                                           " }");
+                                       }
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 } else if(choice1 == 2){
                                     continue;
                                 }
@@ -114,6 +217,6 @@ public class Main {
         System.out.println("Enter your phone number: ");
         student.setHomePhone(scanner.next());
          var result = studentDao.addNewStudent(student);
-        System.out.println(result);
+
     }
 }

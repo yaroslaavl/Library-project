@@ -6,6 +6,9 @@ import org.example.exception.DaoException;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -24,8 +27,8 @@ public class Main {
                    System.out.println("Do you want to leave alone or with someone?");
                    System.out.println("Press 1 if alone");
                    System.out.println("Press 2 if not alone");
-                   choice = scanner.nextInt();
-                    if(choice == 1){
+                   int choiceTypeOfRoom = scanner.nextInt();
+                    if(choiceTypeOfRoom == 1){
                         System.out.println("Trying to find a room....");
                         try {
                             Thread.sleep(1000);
@@ -44,7 +47,7 @@ public class Main {
                                 if(choice1 == 1){
                                     System.out.println("Please fill in your information");
                                     add(scanner);
-                                    //нужно добавить вывод всей информации
+
                                     var sql = """
                                             UPDATE library.room
                                             SET occupants_count = 1
@@ -72,22 +75,40 @@ public class Main {
                                         throw new RuntimeException(e);
                                      }
                                     var sql2 = """
-                                            SELECT *
-                                            FROM library.student
-                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student)
+                                            UPDATE library.student
+                                            SET living_status_id = ?
+                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student);
                                             """;
                                     try(var connection = ConnectionManager.get();
                                         var preparedStatement = connection.prepareStatement(sql2);
+                                    ){
+                                        preparedStatement.setInt(1,choiceTypeOfRoom);
+                                        preparedStatement.executeUpdate();
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    var sql3 = """
+                                            SELECT library.student.id,first_name,last_name,settlement_date,home_phone,room_number,living_status,price_per_month
+                                            FROM library.student
+                                                     RIGHT JOIN library.room_type rt on rt.id = student.living_status_id
+                                                     JOIN library.room r on r.id = student.room
+                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student);
+                                            
+                                            """;
+                                    try(var connection = ConnectionManager.get();
+                                        var preparedStatement = connection.prepareStatement(sql3);
                                     ){
                                         var resultSet= preparedStatement.executeQuery();
                                         while (resultSet.next()) {
                                             int id = resultSet.getInt("id");
                                             String firstName = resultSet.getString("first_name");
                                             String lastName = resultSet.getString("last_name");
-                                            Timestamp date = resultSet.getTimestamp("settlement_date");
+                                            LocalDate date = LocalDate.now();
+                                            System.out.print(date);
                                             String homePhone = resultSet.getString("home_phone");
-                                            int room = resultSet.getInt("room");
-                                            int livingStatusId = resultSet.getInt("living_status_id");
+                                            int roomNumber1 = resultSet.getInt("room_number");
+                                            String livingStatus= resultSet.getString("living_status");
+                                            double price = resultSet.getDouble("price_per_month");
                                             System.out.println
                                                     ("Your information = " +
                                                             "{ " +
@@ -96,8 +117,9 @@ public class Main {
                                                             ", Last Name: "+lastName+
                                                             ", Date: "+date+
                                                             ", Phone: "+homePhone+
-                                                            ", Room: "+room+
-                                                            ", Living Status: "+livingStatusId+
+                                                            ", Room: "+roomNumber1+
+                                                            ", Living Status: "+livingStatus+
+                                                            ", Price Per Month: "+price+
                                                             " }");
                                         }
                                     } catch (SQLException e) {
@@ -112,7 +134,7 @@ public class Main {
                         } catch (DaoException e){
                             throw new RuntimeException();
                         }
-                    } else if(choice == 2){
+                    } else if(choiceTypeOfRoom == 2){
                         System.out.println("Trying to find a room....");
                         try {
                             Thread.sleep(1000);
@@ -158,23 +180,40 @@ public class Main {
                                     } catch (SQLException e) {
                                         throw new RuntimeException(e);
                                     }
-                                    var sql2 = """
-                                            SELECT *
-                                            FROM library.student
-                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student)
+                                    var sql2= """
+                                            UPDATE library.student
+                                            SET living_status_id = ?
+                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student);
                                             """;
                                     try(var connection = ConnectionManager.get();
                                         var preparedStatement = connection.prepareStatement(sql2);
+                                    ){
+                                        preparedStatement.setInt(1,choiceTypeOfRoom);
+                                        preparedStatement.executeUpdate();
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    var sql3 = """
+                                            SELECT library.student.id,first_name,last_name,settlement_date,home_phone,room_number,living_status,price_per_month
+                                            FROM library.student
+                                                     RIGHT JOIN library.room_type rt on rt.id = student.living_status_id
+                                                     JOIN library.room r on r.id = student.room
+                                            WHERE settlement_date = (SELECT MAX(settlement_date) FROM library.student);
+                                            """;
+                                    try(var connection = ConnectionManager.get();
+                                        var preparedStatement = connection.prepareStatement(sql3);
                                     ){
                                        var resultSet= preparedStatement.executeQuery();
                                        while (resultSet.next()){
                                            int id = resultSet.getInt("id");
                                            String firstName = resultSet.getString("first_name");
                                            String lastName = resultSet.getString("last_name");
-                                           Timestamp date = resultSet.getTimestamp("settlement_date");
+                                           LocalDate date = LocalDate.now();
+                                           System.out.print(date);
                                            String homePhone = resultSet.getString("home_phone");
-                                           int room = resultSet.getInt("room");
-                                           int livingStatusId = resultSet.getInt("living_status_id");
+                                           int roomNumber1 = resultSet.getInt("room_number");
+                                           String livingStatus = resultSet.getString("living_status");
+                                           double price = resultSet.getDouble("price_per_month");
                                            System.out.println
                                                    ("Your information = " +
                                                            "{ " +
@@ -183,8 +222,9 @@ public class Main {
                                                            ", Last Name: "+lastName+
                                                            ", Date: "+date+
                                                            ", Phone: "+homePhone+
-                                                           ", Room: "+room+
-                                                           ", Living Status: "+livingStatusId+
+                                                           ", Room: "+roomNumber1+
+                                                           ", Living Status: "+livingStatus+
+                                                           ", Price Per Month: "+price+
                                                            " }");
                                        }
                                     } catch (SQLException e) {

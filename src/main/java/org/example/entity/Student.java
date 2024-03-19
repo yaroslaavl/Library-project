@@ -96,16 +96,19 @@ public class Student {
 //        this.homePhone = formattedBuilder.toString();
 //    }
     public void setHomePhone(String homePhone){
+        String formattedNumberOfPhone = homePhone.replaceAll("[^0-9]","");
         Pattern regex = Pattern.compile("\\d{9}");
-        Matcher matcher = regex.matcher(homePhone);
+        Matcher matcher = regex.matcher(formattedNumberOfPhone);
+        try{
             if (matcher.matches()) {
-                String homePhoneFormatted = homePhone.substring(0, 3) + "-" +
-                        homePhone.substring(3, 6) + "-" +
-                        homePhone.substring(6);
+                String homePhoneFormatted = formattedNumberOfPhone.substring(0, 3) + "-" +
+                        formattedNumberOfPhone.substring(3, 6) + "-" +
+                        formattedNumberOfPhone.substring(6);
                this.homePhone = homePhoneFormatted;
-            } else {
-                throw new IllegalArgumentException("Something went wrong");
             }
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
     }
 
     public Integer getRoom() {

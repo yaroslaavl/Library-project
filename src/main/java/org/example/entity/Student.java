@@ -1,15 +1,18 @@
 package org.example.entity;
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Student {
     private Integer id;
     private String firstName;
     private String lastName;
-    private Timestamp settlementDate;
+    private Date settlementDate;
     private String homePhone;
     private Integer room;
-    private Integer roomTypeId;
+    private Integer livingStatusId;
 
     public Student(Integer id, String firstName, String lastName, Timestamp settlementDate, String homePhone, Integer room,Integer roomTypeId) {
         this.id = id;
@@ -18,7 +21,7 @@ public class Student {
         this.settlementDate = settlementDate;
         this.homePhone = homePhone;
         this.room = room;
-        this.roomTypeId = roomTypeId;
+        this.livingStatusId = roomTypeId;
     }
 
     public Student() {
@@ -34,7 +37,7 @@ public class Student {
                 ", settlementDate=" + settlementDate +
                 ", homePhone='" + homePhone + '\'' +
                 ", room=" + room +
-                ", roomTypeId=" + roomTypeId +
+                ", roomTypeId=" + livingStatusId +
                 '}';
     }
 
@@ -62,11 +65,11 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public Timestamp getSettlementDate() {
+    public Date getSettlementDate() {
         return settlementDate;
     }
 
-    public void setSettlementDate(Timestamp settlementDate) {
+    public void setSettlementDate(Date settlementDate) {
         this.settlementDate = settlementDate;
     }
 
@@ -74,23 +77,35 @@ public class Student {
         return homePhone;
     }
 
-    public void setHomePhone(String homePhone) {
-        String formattedNumberOfPhone = homePhone.replaceAll("[^0-9]","");
-         if(formattedNumberOfPhone.length() <=3){
-             this.homePhone = formattedNumberOfPhone;
-             return;
-         }
-        StringBuilder formattedBuilder = new StringBuilder();
-        int count = 0;
-        for(char c:formattedNumberOfPhone.toCharArray()){
-            if(count == 3){
-                formattedBuilder.append("-");
-                count = 0;
+//    public void setHomePhone(String homePhone) {
+//        String formattedNumberOfPhone = homePhone.replaceAll("[^0-9]","");
+//         if(formattedNumberOfPhone.length() <=3){
+//             this.homePhone = formattedNumberOfPhone;
+//             return;
+//         }
+//        StringBuilder formattedBuilder = new StringBuilder();
+//        int count = 0;
+//        for(char c:formattedNumberOfPhone.toCharArray()){
+//            if(count == 3){
+//                formattedBuilder.append("-");
+//                count = 0;
+//            }
+//            formattedBuilder.append(c);
+//            count++;
+//        }
+//        this.homePhone = formattedBuilder.toString();
+//    }
+    public void setHomePhone(String homePhone){
+        Pattern regex = Pattern.compile("\\d{9}");
+        Matcher matcher = regex.matcher(homePhone);
+            if (matcher.matches()) {
+                String homePhoneFormatted = homePhone.substring(0, 3) + "-" +
+                        homePhone.substring(3, 6) + "-" +
+                        homePhone.substring(6);
+               this.homePhone = homePhoneFormatted;
+            } else {
+                throw new IllegalArgumentException("Something went wrong");
             }
-            formattedBuilder.append(c);
-            count++;
-        }
-        this.homePhone = formattedBuilder.toString();
     }
 
     public Integer getRoom() {
@@ -101,12 +116,12 @@ public class Student {
         this.room = room;
     }
 
-    public Integer getRoomTypeId() {
-        return roomTypeId;
+    public Integer getLivingStatusId() {
+        return livingStatusId;
     }
 
-    public void setRoomTypeId(Integer roomTypeId) {
-        this.roomTypeId = roomTypeId;
+    public void setLivingStatusId(Integer livingStatusId) {
+        this.livingStatusId = livingStatusId;
     }
 }
 

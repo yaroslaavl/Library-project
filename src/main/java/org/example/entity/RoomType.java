@@ -3,7 +3,7 @@ package org.example.entity;
 import java.math.BigDecimal;
 
 public record RoomType(Integer id,
-                       String typeName,
-                       BigDecimal price) {
+                       String livingStatus,
+                       BigDecimal pricePerMonth) {
 
 }

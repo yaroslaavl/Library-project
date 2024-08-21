@@ -1,5 +1,6 @@
 package org.example.dao;
 import org.example.ConnectionManager;
+import org.example.entity.Room;
 import org.example.entity.Student;
 import org.example.exception.DaoException;
 
@@ -41,38 +42,34 @@ public class StudentDao {
         return INSTANCE;
     }
 
-   public Optional<Student> checkRoom() {
+   public Optional<Integer> checkRoomWithOneStudent() {
        try (var connection = ConnectionManager.open();
             var preparedStatement = connection.prepareStatement(CHECK_FREE_ROOM_SQL)) {
            preparedStatement.setObject(1, 1);
 
            var resultSet = preparedStatement.executeQuery();
-           Student freeRoom = null;
+           Integer freeRoom = null;
            while (resultSet.next()) {
-               int count = resultSet.getInt(1);
-               if (count > 0) {
-                   System.out.println("Room where only 1 student: " + count);
-                   freeRoom = new Student();
-               }
+               int roomNum = resultSet.getInt(1);
+                   System.out.println("Room where only 1 student: " + roomNum);
+                   freeRoom = roomNum;
            }
            return Optional.ofNullable(freeRoom);
        } catch (DaoException | SQLException e) {
            throw new RuntimeException(e);
        }
    }
-    public Optional<Student> checkSoloRoom() {
+    public Optional<Integer> checkFreeRoom() {
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(CHECK_SOLO_ROOM_SQL)) {
             preparedStatement.setObject(1, 0);
 
             var resultSet = preparedStatement.executeQuery();
-            Student freeRoom = null;
+            Integer freeRoom = null;
             while (resultSet.next()) {
-                int count = resultSet.getInt(1);
-                if (count > 0) {
-                    System.out.println("Free room: " + count);
-                    freeRoom = new Student();
-                }
+                int roomNum = resultSet.getInt(1);
+                    System.out.println("Free room: " + roomNum);
+                    freeRoom = roomNum;
             }
             return Optional.ofNullable(freeRoom);
         } catch (DaoException | SQLException e) {

@@ -35,7 +35,7 @@ public class Main {
                         }
                         var freeRoom = StudentDao.getInstance();
                         try{
-                            Optional<Student> resultSoloRoom = freeRoom.checkSoloRoom();
+                            Optional<Integer> resultSoloRoom = freeRoom.checkFreeRoom();
                             System.out.println("Choose a room");
                             int roomNumber = scanner.nextInt();
                             if(resultSoloRoom.isPresent()){
@@ -139,7 +139,7 @@ public class Main {
                         }
                         var freeRoom = StudentDao.getInstance();
                         try{
-                             Optional<Student> resultNotSoloRoom = freeRoom.checkRoom();
+                             Optional<Integer> resultNotSoloRoom = freeRoom.checkRoomWithOneStudent();
                             System.out.println("Choose a room");
                             int roomNumber2 = scanner.nextInt();
                             if(resultNotSoloRoom.isPresent()){

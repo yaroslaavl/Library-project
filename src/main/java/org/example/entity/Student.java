@@ -77,24 +77,6 @@ public class Student {
         return homePhone;
     }
 
-//    public void setHomePhone(String homePhone) {
-//        String formattedNumberOfPhone = homePhone.replaceAll("[^0-9]","");
-//         if(formattedNumberOfPhone.length() <=3){
-//             this.homePhone = formattedNumberOfPhone;
-//             return;
-//         }
-//        StringBuilder formattedBuilder = new StringBuilder();
-//        int count = 0;
-//        for(char c:formattedNumberOfPhone.toCharArray()){
-//            if(count == 3){
-//                formattedBuilder.append("-");
-//                count = 0;
-//            }
-//            formattedBuilder.append(c);
-//            count++;
-//        }
-//        this.homePhone = formattedBuilder.toString();
-//    }
     public void setHomePhone(String homePhone){
         String formattedNumberOfPhone = homePhone.replaceAll("[^0-9]","");
         Pattern regex = Pattern.compile("\\d{9}");
